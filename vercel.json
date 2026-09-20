@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/watchlist", "destination": "/index.html" }
+  ]
+}
