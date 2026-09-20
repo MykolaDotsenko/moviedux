@@ -6,18 +6,9 @@ A deliberately small, polished React movie browser for searching a compact colle
 
 [![CI](https://github.com/MykolaDotsenko/moviedux/actions/workflows/ci.yml/badge.svg)](https://github.com/MykolaDotsenko/moviedux/actions/workflows/ci.yml)
 
-## Screenshots
-
-### Desktop discovery
+## Screenshot
 
 ![Moviedux desktop discovery view](docs/screenshots/discover-desktop.png)
-
-### Mobile experience
-
-<p align="center">
-  <img src="docs/screenshots/discover-mobile.png" alt="Moviedux movie discovery filters and cards on mobile" width="360" />
-  <img src="docs/screenshots/watchlist-mobile.png" alt="Moviedux saved watchlist on mobile" width="360" />
-</p>
 
 ## Why this repository exists
 
@@ -121,7 +112,7 @@ For the first local Playwright run:
 npx playwright install chromium
 ```
 
-To regenerate the README screenshots from a running production preview:
+To regenerate the README screenshot from a running production preview:
 
 ```bash
 npm run build

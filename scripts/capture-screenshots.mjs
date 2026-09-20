@@ -35,41 +35,16 @@ try {
     colorScheme: "dark",
     deviceScaleFactor: 1,
   });
-  const desktopPage = await desktop.newPage();
-  await openPage(desktopPage, "/", "Find something worth watching.");
-  await settleVisiblePosters(desktopPage);
-  await desktopPage.screenshot({
+
+  const page = await desktop.newPage();
+  await openPage(page, "/", "Find something worth watching.");
+  await settleVisiblePosters(page);
+  await page.screenshot({
     path: `${outputDir}/discover-desktop.png`,
     fullPage: false,
   });
+
   await desktop.close();
-
-  const mobile = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    colorScheme: "dark",
-    deviceScaleFactor: 1,
-    isMobile: true,
-    hasTouch: true,
-  });
-  const mobilePage = await mobile.newPage();
-  await openPage(mobilePage, "/", "Find something worth watching.");
-  await mobilePage.getByRole("heading", { name: "Browse movies" }).scrollIntoViewIfNeeded();
-  await settleVisiblePosters(mobilePage);
-  await mobilePage.screenshot({
-    path: `${outputDir}/discover-mobile.png`,
-    fullPage: false,
-  });
-
-  await mobilePage.evaluate(() => {
-    globalThis.localStorage.setItem("moviedux.watchlist.v1", JSON.stringify([1, 5, 9]));
-  });
-  await openPage(mobilePage, "/watchlist", "Your watchlist");
-  await settleVisiblePosters(mobilePage);
-  await mobilePage.screenshot({
-    path: `${outputDir}/watchlist-mobile.png`,
-    fullPage: false,
-  });
-  await mobile.close();
 } finally {
   await browser.close();
 }
