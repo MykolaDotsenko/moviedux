@@ -8,16 +8,23 @@ await mkdir(outputDir, { recursive: true });
 
 const browser = await chromium.launch();
 
-const waitForImages = async (page) => {
-  await page.waitForFunction(() =>
-    Array.from(document.images).every((image) => image.complete),
-  );
-};
-
 const openPage = async (page, path, heading) => {
   await page.goto(new URL(path, baseUrl).toString(), { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { name: heading }).waitFor();
-  await waitForImages(page);
+};
+
+const settleVisiblePosters = async (page) => {
+  const firstPoster = page.locator(".movie-poster").first();
+  await firstPoster.waitFor({ state: "visible" });
+  await firstPoster.evaluate((image) => {
+    if (image instanceof HTMLImageElement && !image.complete) {
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }
+  });
+  await page.waitForTimeout(250);
 };
 
 try {
@@ -28,6 +35,7 @@ try {
   });
   const desktopPage = await desktop.newPage();
   await openPage(desktopPage, "/", "Find something worth watching.");
+  await settleVisiblePosters(desktopPage);
   await desktopPage.screenshot({
     path: `${outputDir}/discover-desktop.png`,
     fullPage: false,
@@ -44,6 +52,7 @@ try {
   const mobilePage = await mobile.newPage();
   await openPage(mobilePage, "/", "Find something worth watching.");
   await mobilePage.getByRole("heading", { name: "Browse movies" }).scrollIntoViewIfNeeded();
+  await settleVisiblePosters(mobilePage);
   await mobilePage.screenshot({
     path: `${outputDir}/discover-mobile.png`,
     fullPage: false,
@@ -53,6 +62,7 @@ try {
     localStorage.setItem("moviedux.watchlist.v1", JSON.stringify([1, 5, 9]));
   });
   await openPage(mobilePage, "/watchlist", "Your watchlist");
+  await settleVisiblePosters(mobilePage);
   await mobilePage.screenshot({
     path: `${outputDir}/watchlist-mobile.png`,
     fullPage: false,
