@@ -1,7 +1,9 @@
 import { chromium } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
+import { env } from "node:process";
+import { URL } from "node:url";
 
-const baseUrl = process.env.SCREENSHOT_URL ?? "http://127.0.0.1:4173";
+const baseUrl = env.SCREENSHOT_URL ?? "http://127.0.0.1:4173";
 const outputDir = "docs/screenshots";
 
 await mkdir(outputDir, { recursive: true });
@@ -17,7 +19,7 @@ const settleVisiblePosters = async (page) => {
   const firstPoster = page.locator(".movie-poster").first();
   await firstPoster.waitFor({ state: "visible" });
   await firstPoster.evaluate((image) => {
-    if (image instanceof HTMLImageElement && !image.complete) {
+    if (image instanceof globalThis.HTMLImageElement && !image.complete) {
       return new Promise((resolve) => {
         image.addEventListener("load", resolve, { once: true });
         image.addEventListener("error", resolve, { once: true });
@@ -59,7 +61,7 @@ try {
   });
 
   await mobilePage.evaluate(() => {
-    localStorage.setItem("moviedux.watchlist.v1", JSON.stringify([1, 5, 9]));
+    globalThis.localStorage.setItem("moviedux.watchlist.v1", JSON.stringify([1, 5, 9]));
   });
   await openPage(mobilePage, "/watchlist", "Your watchlist");
   await settleVisiblePosters(mobilePage);
